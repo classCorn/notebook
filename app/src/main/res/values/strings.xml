@@ -1,4 +1,6 @@
 <resources>
-    <string name="app_name">ToDozer</string>
+    <string name="app_name">2Do</string>
     <string name="description">description</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
 </resources>

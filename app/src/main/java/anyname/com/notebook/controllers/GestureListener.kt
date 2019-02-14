@@ -1,4 +1,4 @@
-package isf.seamenstaxi_r.Entities
+package anyname.com.notebook.controllers
 
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -12,10 +12,13 @@ class GestureListener(view: View) {
         var views = emptyArray<View>()
         views = views.plus(view)
 
-        val childCount = (view as ViewGroup).childCount
-        for (i in 0 until childCount) {
-            views = views.plus(view.getChildAt(i))
+        if (view is ViewGroup) {
+            val childCount = (view as ViewGroup).childCount
+            for (i in 0 until childCount) {
+                views = views.plus(view.getChildAt(i))
+            }
         }
+
 
         var viewsAdd = emptyArray<View>()
         for (i in views) {
@@ -29,9 +32,13 @@ class GestureListener(view: View) {
 
         views = views.plus(viewsAdd)
 
-        views.forEach {
+        views.forEach { itView ->
 
-            val gd = GestureDetector(it.context, object : GestureDetector.SimpleOnGestureListener() {
+            itView.setOnClickListener {
+
+            }
+
+            val gd = GestureDetector(itView.context, object : GestureDetector.SimpleOnGestureListener() {
                 override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
                     val x1 = e1?.rawX
                     val y1 = e1?.rawY
@@ -48,13 +55,13 @@ class GestureListener(view: View) {
                 }
 
                 override fun onSingleTapUp(e: MotionEvent?): Boolean {
-                    onTap()
+                    onTap(itView)
                     return super.onSingleTapUp(e)
                 }
             })
 
             /*----ON UP----*/
-            it.setOnTouchListener { v, event ->
+            itView.setOnTouchListener { v, event ->
                 if (event.action == MotionEvent.ACTION_UP)
                     when (cAction) {
                         "left" -> view.translationX = 0f
@@ -68,24 +75,39 @@ class GestureListener(view: View) {
 
     }
 
-    //private var cView = view
-    //private var cLimit: Float = 0f
     private var cAction = ""
     private var onAction: ((dXY: Float) -> Unit)? = null
-    var onTap: (() -> Unit) = {}
-    var onEndGesture: (() -> Unit) = {}
+    private var onTap: ((view: View) -> Unit) = {}
+
+    private fun left(dX: Float) {
+
+        onAction?.let {
+            it(dX)
+        }
+    }
+
+    private fun down(dY: Float) {
+
+        onAction?.let {
+            it(dY)
+        }
+    }
+
+    fun setOnClick(action: ((view: View) -> Unit)) {
+
+        this.onTap = action
+    }
 
     fun setOnX(action: (dXY: Float) -> Unit) {
+
         onAction = action
         cAction = "x"
-        //cLimit = dX
     }
 
-    fun setOnDown(action: (dXY: Float) -> Unit) {
-        onAction = action
-        cAction = "down"
-        //cLimit = dY
-    }
+//    fun setOnDown(action: (dXY: Float) -> Unit) {
+//        onAction = action
+//        cAction = "down"
+//    }
 
     /*fun clearGesture() {
         onAction = null
@@ -93,20 +115,5 @@ class GestureListener(view: View) {
         //cLimit = 0f
     }*/
 
-    private fun left(dX: Float) {
-        //cView.translationX = dX
-        //if (dX < cLimit)
-        onAction?.let {
-            it(dX)
-        }
-    }
-
-    private fun down(dY: Float) {
-        //cView.translationY = dY
-        //if (dY > cLimit)
-        onAction?.let {
-            it(dY)
-        }
-    }
 
 }

@@ -1,10 +1,10 @@
 package anyname.com.notebook
 
 import android.animation.Animator
-import android.animation.ValueAnimator
 import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.view.inputmethod.InputMethodManager
@@ -16,12 +16,16 @@ import android.view.LayoutInflater
 import android.view.animation.AccelerateInterpolator
 import android.widget.LinearLayout
 import android.widget.ScrollView
+import android.graphics.Rect
+import android.util.Log
+import anyname.com.notebook.controllers.GestureListener
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var btnAdd: ImageButton
-    private lateinit var layEdit: RelativeLayout
+    private lateinit var editParentLayout: RelativeLayout
+    private lateinit var editChildLayout: LinearLayout
     private lateinit var txtEdit: EditText
     private lateinit var scrollView: ScrollView
     private var editIndex = -1
@@ -29,7 +33,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
 
-        if (layEdit.visibility == View.VISIBLE) {
+        if (editParentLayout.visibility == View.VISIBLE) {
             showEditLayout(false)
         } else {
             super.onBackPressed()
@@ -42,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 
         initRealm()
         initUI()
-        initDynamical()
+        initDynamicalList()
     }
 
     private fun initRealm() {
@@ -66,9 +70,15 @@ class MainActivity : AppCompatActivity() {
             showEditLayout(true)
         }
 
-        val btnWrite = findViewById<Button>(R.id.btn_edit_write)
-        btnWrite.setOnClickListener {
+        val btnSave = findViewById<Button>(R.id.lay_edit_save)
+        btnSave.setOnClickListener {
             val inputText = txtEdit.text.toString()
+
+            if (inputText.isEmpty()) {
+                showEditLayout(false)
+                return@setOnClickListener
+            }
+
             if (editIndex > -1) {
                 listView.forEach { view ->
                     if (view.tag as Int == editIndex) {
@@ -85,20 +95,37 @@ class MainActivity : AppCompatActivity() {
             showEditLayout(false)
         }
 
-
-        layEdit = findViewById(R.id.lay_edit)
-        layEdit.visibility = View.GONE
-        layEdit.setOnClickListener {
+        val btnCancel = findViewById<Button>(R.id.lay_edit_cancel)
+        btnCancel.setOnClickListener {
             showEditLayout(false)
         }
 
+        editParentLayout = findViewById(R.id.lay_edit_parent)
+        editParentLayout.visibility = View.GONE
+        editParentLayout.setOnClickListener {
+            showEditLayout(false)
+        }
+        val layEditControl = findViewById<RelativeLayout>(R.id.lay_edit_control)
+        editParentLayout.viewTreeObserver.addOnGlobalLayoutListener {
+            val screenHeight = editParentLayout.rootView.height
+            val r = Rect()
+            val view = window.decorView
+            view.getWindowVisibleDisplayFrame(r)
+            val h = (screenHeight - r.bottom) * (-1f)
+            layEditControl.animate().translationY(h).setDuration(300L).setInterpolator(LinearInterpolator()).start()
+        }
+
+        editChildLayout = findViewById(R.id.lay_edit)
+        showEditLayout(false)
+
         scrollView = findViewById(R.id.lay_scroll)
+
+        //set PLUS_btn visibility when scroll MainListView
         scrollView.requestDisallowInterceptTouchEvent(true)
         scrollView.setOnTouchListener { _, _ ->
             isHideControl = true
             return@setOnTouchListener false
         }
-
         var oldY = 0
         scrollView.viewTreeObserver.addOnScrollChangedListener {
             if (isHideControl) {
@@ -124,21 +151,24 @@ class MainActivity : AppCompatActivity() {
 
     private fun showEditLayout(show: Boolean, index: Int = -1) {
 
-        layEdit.visibility = if (show) View.VISIBLE else View.GONE
-        val anim = ValueAnimator.ofFloat(0f, 1f)
-        anim.duration = 500
-        anim.addUpdateListener {
-            val v = it.animatedValue as Float
-            layEdit.alpha = v
-        }
-        anim.start()
+        if (show) {
+            editParentLayout.visibility = View.VISIBLE
+        } else
+            Handler().postDelayed({
+                editParentLayout.visibility = View.GONE
+            }, 300)
+
+        val transition = if (show) 0f else 1200f
+        editChildLayout.animate().translationY(transition).setDuration(200L).setInterpolator(LinearInterpolator()).start()
+        val alpha = if (show) 1f else 0f
+        editParentLayout.animate().alpha(alpha).setDuration(300L).setInterpolator(LinearInterpolator()).start()
 
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         if (show) {
             txtEdit.requestFocus()
             imm.showSoftInput(txtEdit, InputMethodManager.SHOW_IMPLICIT)
         } else {
-            val view = layEdit
+            val view = editParentLayout
             imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
 
@@ -151,7 +181,8 @@ class MainActivity : AppCompatActivity() {
 
     private var list = mutableListOf<String>()
     private var listView = mutableListOf<View>()
-    private fun initDynamical() {
+
+    private fun initDynamicalList() {
         list = CRealmControllers.getItems()
         listView = mutableListOf()
 
@@ -162,21 +193,28 @@ class MainActivity : AppCompatActivity() {
 
     private fun addItem(text: String, addToList: Boolean = true) {
 
+        val itemTag = listView.size
         val parent = findViewById<LinearLayout>(R.id.lay_dynamical)
         val inflater = baseContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val lay = inflater.inflate(R.layout.item_of_list, null)
-        lay.tag = listView.size
-        lay.setOnClickListener {
-            showEditLayout(true, it.tag as Int)
-        }
-        val remove = lay.findViewById<ImageButton>(R.id.item_remove)
-        remove.tag = listView.size
+        lay.tag = itemTag
 
-        lay.findViewById<TextView>(R.id.item_text).text = text
-
-        setGesture(lay)
         listView.add(lay)
         parent.addView(lay)
+
+        val itemTextView = lay.findViewById<TextView>(R.id.item_text)
+        itemTextView.text = text
+        itemTextView.tag = itemTag
+        val gestureMainLay = GestureListener(lay)
+        gestureMainLay.setOnX {
+            lay.translationX = it
+        }
+        gestureMainLay.setOnClick {
+            Log.i("gesture.setOnClick", "${it.tag}")
+            if (it.tag is Int) {
+                showEditLayout(true, it.tag as Int)
+            }
+        }
 
         isHideControl = false
         scrollView.post {
@@ -186,12 +224,13 @@ class MainActivity : AppCompatActivity() {
         lay.scaleY = 0f
         lay.animate().scaleY(1f).setInterpolator(AccelerateInterpolator()).setDuration(300).start()
 
-        remove.setOnClickListener {
+        val remove = lay.findViewById<ImageButton>(R.id.item_remove)
+        remove.tag = itemTag
+        GestureListener(remove).setOnClick {
             val tag = it.tag as Int
 
             val listenerAnimator = object : Animator.AnimatorListener {
-                override fun onAnimationRepeat(p0: Animator?) {
-                }
+                override fun onAnimationRepeat(p0: Animator?) {}
 
                 override fun onAnimationEnd(p0: Animator?) {
                     parent.removeView(listView[tag])
@@ -215,21 +254,20 @@ class MainActivity : AppCompatActivity() {
             if (tag < listView.size) {
                 listView[tag].pivotX = listView[tag].width - 29f
                 listView[tag].pivotY = 29f
-                listView[tag].animate().translationX(2000f).alpha(0.5f).setDuration(300).setListener(listenerAnimator).start()
+                listView[tag].animate()
+                        .translationX(2000f)
+                        .alpha(0.5f)
+                        .setDuration(300)
+                        .setListener(listenerAnimator)
+                        .start()
             }
         }
+
 
         if (addToList) {
             list.add(text)
             updateRealm()
         }
-    }
-
-    private fun setGesture(view: View) {
-//        val gesture = GestureListener(view)
-//        gesture.setOnX {
-//            view.translationX = it
-//        }
     }
 
 }
