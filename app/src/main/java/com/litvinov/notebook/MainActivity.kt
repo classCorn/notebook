@@ -17,10 +17,16 @@ import android.view.animation.AccelerateInterpolator
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.graphics.Rect
+import android.net.Uri
+import android.os.Build
 import android.util.Log
 import com.crashlytics.android.Crashlytics
-import io.fabric.sdk.android.Fabric
+import com.google.firebase.storage.FirebaseStorage
 import com.litvinov.notebook.controllers.GestureListener
+import io.fabric.sdk.android.Fabric
+import java.io.File
+import java.io.FileWriter
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,6 +53,8 @@ class MainActivity : AppCompatActivity() {
         initRealm()
         initUI()
         initDynamicalList()
+
+        Fabric.with(this, Crashlytics())
     }
 
     private fun initRealm() {
@@ -67,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         btnAdd = findViewById(R.id.btn_main_add)
         btnAdd.setOnClickListener {
 
-            this.forceCrash(it)
+            this.sendLog()
 
             txtEdit.setText("")
             showEditLayout(true)
@@ -266,15 +274,56 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
         if (addToList) {
             list.add(text)
             updateRealm()
         }
     }
 
-    fun forceCrash(view: View) {
-        throw RuntimeException("This is a crash")
+    private fun sendLog() {
+
+        this.createUploadFile()
+    }
+
+    private fun createUploadFile() {
+
+        val storage = FirebaseStorage.getInstance()
+        val storageRef = storage.reference
+        val fileDir = File(filesDir, "log")
+        if (!fileDir.exists()) {
+            fileDir.mkdir()
+        }
+        val file = File(fileDir, "log.txt")
+        val uri = Uri.fromFile(file)
+        val writer = FileWriter(file)
+        writer.append("Hello!!! ${System.currentTimeMillis()}")
+        writer.append("\r\nBRAND: ${Build.BRAND}")
+        writer.append("\r\nMODEL: ${Build.MODEL}")
+        writer.append("\r\nVERSION.SDK_INT: ${Build.VERSION.SDK_INT}")
+        writer.append("\r\nVERSION_CODES.BASE: ${Build.VERSION_CODES.BASE}")
+        writer.append("\r\nDISPLAY: ${Build.DISPLAY}")
+        writer.append("\r\nHARDWARE: ${Build.HARDWARE}")
+        writer.append("\r\nHOST: ${Build.HOST}")
+        writer.append("\r\nPRODUCT: ${Build.PRODUCT}")
+        writer.append("\r\nUSER: ${Build.USER}")
+        writer.append("\r\nVERSION.RELEASE: ${Build.VERSION.RELEASE}")
+        writer.flush()
+        writer.close()
+
+        val myId = "bluetooth33d@gmail.com"
+        val brand = Build.BRAND
+
+        val riversRef = storageRef.child("log/$brand/$myId/log.txt")
+        val uploadTask = riversRef.putFile(uri)
+        uploadTask.addOnFailureListener {
+            Log.i("FirebaseStorage", "F ${it.message}")
+        }.addOnSuccessListener {
+            Log.i("FirebaseStorage", "addOnSuccessListener")
+        }
+    }
+
+    private fun forceCrash() {
+        //throw RuntimeException("This is a crash")
     }
 
 
