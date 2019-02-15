@@ -1,4 +1,4 @@
-package litvinov.com.notebook
+package com.litvinov.notebook
 
 import android.animation.Animator
 import android.content.Context
@@ -9,7 +9,7 @@ import android.view.View
 import android.view.animation.LinearInterpolator
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import litvinov.com.notebook.controllers.CRealmControllers
+import com.litvinov.notebook.controllers.CRealmControllers
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import android.view.LayoutInflater
@@ -18,8 +18,9 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.graphics.Rect
 import android.util.Log
-import litvinov.com.notebook.controllers.GestureListener
-
+import com.crashlytics.android.Crashlytics
+import io.fabric.sdk.android.Fabric
+import com.litvinov.notebook.controllers.GestureListener
 
 class MainActivity : AppCompatActivity() {
 
@@ -43,7 +44,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         initRealm()
         initUI()
         initDynamicalList()
@@ -66,6 +66,9 @@ class MainActivity : AppCompatActivity() {
 
         btnAdd = findViewById(R.id.btn_main_add)
         btnAdd.setOnClickListener {
+
+            this.forceCrash(it)
+
             txtEdit.setText("")
             showEditLayout(true)
         }
@@ -269,5 +272,10 @@ class MainActivity : AppCompatActivity() {
             updateRealm()
         }
     }
+
+    fun forceCrash(view: View) {
+        throw RuntimeException("This is a crash")
+    }
+
 
 }

@@ -1,35 +1,35 @@
 {
   "project_info": {
-    "project_number": "704761127930",
-    "firebase_url": "https://notebook2do-ed32c.firebaseio.com",
-    "project_id": "notebook2do-ed32c",
-    "storage_bucket": "notebook2do-ed32c.appspot.com"
+    "project_number": "557218359730",
+    "firebase_url": "https://notebook2do-91538.firebaseio.com",
+    "project_id": "notebook2do-91538",
+    "storage_bucket": "notebook2do-91538.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:704761127930:android:202c746811889416",
+        "mobilesdk_app_id": "1:557218359730:android:cf35373167df804b",
         "android_client_info": {
-          "package_name": "litvinov.com.notebook"
+          "package_name": "com.litvinov.notebook"
         }
       },
       "oauth_client": [
         {
-          "client_id": "704761127930-3ruhftcqteg5o6jdanllplpvhjrsgc0c.apps.googleusercontent.com",
+          "client_id": "557218359730-s13u2je1j37lkspb62bmg750v4i3gr3m.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "litvinov.com.notebook",
+            "package_name": "com.litvinov.notebook",
             "certificate_hash": "35ab7eaf2b2875e62315c353a248470ea99d03d6"
           }
         },
         {
-          "client_id": "704761127930-atp3al4lenv2dcqm0la4268sq4qkk85u.apps.googleusercontent.com",
+          "client_id": "557218359730-a35us0otom3kbd6u7eosp8ig5ec0khn9.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAu0iwIy-ImWX0ahgjcI_-5WoypOM-HWEk"
+          "current_key": "AIzaSyBEwo7OcYxjJAzYwE-z4wwGdnVFo3NdlLE"
         }
       ],
       "services": {
@@ -40,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "704761127930-atp3al4lenv2dcqm0la4268sq4qkk85u.apps.googleusercontent.com",
+              "client_id": "557218359730-a35us0otom3kbd6u7eosp8ig5ec0khn9.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
