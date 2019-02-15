@@ -1,6 +1,6 @@
-package anyname.com.notebook.controllers
+package litvinov.com.notebook.controllers
 
-import anyname.com.notebook.models.MRealmItem
+import litvinov.com.notebook.models.MRealmItem
 import io.realm.DynamicRealm
 import io.realm.Realm
 import io.realm.RealmMigration

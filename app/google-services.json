@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "704761127930",
+    "firebase_url": "https://notebook2do-ed32c.firebaseio.com",
+    "project_id": "notebook2do-ed32c",
+    "storage_bucket": "notebook2do-ed32c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:704761127930:android:202c746811889416",
+        "android_client_info": {
+          "package_name": "litvinov.com.notebook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "704761127930-3ruhftcqteg5o6jdanllplpvhjrsgc0c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "litvinov.com.notebook",
+            "certificate_hash": "35ab7eaf2b2875e62315c353a248470ea99d03d6"
+          }
+        },
+        {
+          "client_id": "704761127930-atp3al4lenv2dcqm0la4268sq4qkk85u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAu0iwIy-ImWX0ahgjcI_-5WoypOM-HWEk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "704761127930-atp3al4lenv2dcqm0la4268sq4qkk85u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,4 @@
-package anyname.com.notebook.models
+package litvinov.com.notebook.models
 
 import io.realm.RealmObject
 

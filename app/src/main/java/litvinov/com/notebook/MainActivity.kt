@@ -1,4 +1,4 @@
-package anyname.com.notebook
+package litvinov.com.notebook
 
 import android.animation.Animator
 import android.content.Context
@@ -9,7 +9,7 @@ import android.view.View
 import android.view.animation.LinearInterpolator
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import anyname.com.notebook.controllers.CRealmControllers
+import litvinov.com.notebook.controllers.CRealmControllers
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import android.view.LayoutInflater
@@ -18,7 +18,7 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.graphics.Rect
 import android.util.Log
-import anyname.com.notebook.controllers.GestureListener
+import litvinov.com.notebook.controllers.GestureListener
 
 
 class MainActivity : AppCompatActivity() {

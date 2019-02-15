@@ -1,4 +1,4 @@
-package anyname.com.notebook.controllers
+package litvinov.com.notebook.controllers
 
 import android.view.GestureDetector
 import android.view.MotionEvent
